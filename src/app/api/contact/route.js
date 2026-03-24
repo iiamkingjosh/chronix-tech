@@ -1,5 +1,7 @@
 import { Resend } from "resend";
 
+export const runtime = "nodejs"; // ✅ VERY IMPORTANT
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
@@ -10,7 +12,7 @@ export async function POST(req) {
 
     const { firstName, lastName, email, phone, message } = body;
 
-    await resend.emails.send({
+    const response = await resend.emails.send({
       from: "Chronix <onboarding@resend.dev>",
       to: "your-email@gmail.com", // 🔥 PUT YOUR REAL EMAIL
       subject: "New Contact Message",
@@ -22,9 +24,16 @@ export async function POST(req) {
       `,
     });
 
-    return Response.json({ success: true });
+    console.log("Resend response:", response);
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+    });
   } catch (error) {
-    console.error(error);
-    return Response.json({ success: false });
+    console.error("ERROR:", error);
+
+    return new Response(JSON.stringify({ success: false }), {
+      status: 500,
+    });
   }
 }
