@@ -8,13 +8,13 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    const { firstName, lastName, email, phone, message } = body;
-
     console.log("Incoming form data:", body);
 
+    const { firstName, lastName, email, phone, message } = body;
+
     const response = await resend.emails.send({
-      from: "Chronix <info@chronixtechnology.com>", // ✅ YOUR VERIFIED DOMAIN
-      to: "info@chronixtechnology.com", // ✅ WHERE YOU RECEIVE MAILS
+      from: "Chronix <info@chronixtechnology.com>",
+      to: "info@chronixtechnology.com",
       subject: "New Contact Form Message",
       html: `
         <h2>New Contact Message</h2>
@@ -28,18 +28,14 @@ export async function POST(req) {
     console.log("Resend response:", response);
 
     return new Response(
-      JSON.stringify({
-        success: true,
-      }),
+      JSON.stringify({ success: true }),
       { status: 200 }
     );
   } catch (error) {
-    console.error("ERROR SENDING EMAIL:", error);
+    console.error("ERROR:", error);
 
     return new Response(
-      JSON.stringify({
-        success: false,
-      }),
+      JSON.stringify({ success: false }),
       { status: 500 }
     );
   }
