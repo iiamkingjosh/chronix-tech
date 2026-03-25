@@ -1,8 +1,14 @@
+"use client";
 import { servicesPageText } from "@/app/index/text_contents";
 import React from "react";
 import Image from "next/image";
 
 const Offers = () => {
+  // ✅ Safe fallback (prevents crash in production)
+  const offers = servicesPageText?.offers || [];
+
+  if (!offers.length) return null;
+
   return (
     <div className="flex items-center gap-y-4 justify-center flex-col min-h-screen h-auto py-8 px-4 sm:px-6 lg:px-8">
       <span className="btn btn-white btn-lg rounded-full btn-elevated shadow-md shadow-green-400 text-sm sm:text-base whitespace-nowrap px-4 sm:px-6">
@@ -13,9 +19,9 @@ const Offers = () => {
         Take a look at what we offer?
       </h1>
 
-      {/* Mobile: Single column, Tablet: 2 columns, Desktop: 3 columns */}
+      {/* Grid */}
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-3 mt-4 sm:mt-8 w-full max-w-6xl mx-auto place-items-center">
-        {servicesPageText.offers.map((offer, i) => {
+        {offers.map((offer, i) => {
           const bgMap = {
             vibrant_yellow: "bg-yellow-400",
             white: "bg-white border border-gray-200",
@@ -31,7 +37,6 @@ const Offers = () => {
           const isOuter = i === 0 || i === 2;
           const isMiddle = i === 1;
 
-          // Use Tailwind's responsive classes instead of conditional window checks
           return (
             <li
               key={i}
@@ -43,7 +48,7 @@ const Offers = () => {
                 mx-auto
               `}
             >
-              {/* Image Container */}
+              {/* Image */}
               <div
                 className={`relative ${bgMap[offer.bg]} flex justify-center rounded-t-2xl overflow-visible h-44 sm:h-40 lg:h-52`}
               >
@@ -51,7 +56,7 @@ const Offers = () => {
                   width={500}
                   height={500}
                   src={offer.image}
-                  alt={offer.heading}
+                  alt={offer.heading || "Chronix service offering"}
                   className={`
                     w-full object-cover h-full rounded-t-2xl
                     ${isOuter ? "sm:-translate-y-1/4" : ""}
@@ -60,7 +65,7 @@ const Offers = () => {
                 />
               </div>
 
-              {/* Coloured header — sits below the image */}
+              {/* Text */}
               <div
                 className={`${bgMap[offer.bg]} ${textMap[offer.bg]} px-3 sm:px-4 py-2 sm:py-3 rounded-b-2xl`}
               >
