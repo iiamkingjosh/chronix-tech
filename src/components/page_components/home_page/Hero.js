@@ -5,8 +5,9 @@ import React from "react";
 
 const Hero = () => {
   const splitHeading = heroHeading.split(" ");
+
   return (
-    <div className="relative h-screen flex items-center w-full overflow-hidden">
+    <section className="relative h-screen flex items-center w-full overflow-hidden">
       {/* Background Image */}
       <Image
         width={1920}
@@ -14,7 +15,7 @@ const Hero = () => {
         src={"/images/home_page/hero-bg.png"}
         className="absolute inset-0 w-full h-full object-cover -z-10"
         priority
-        alt="Hero background"
+        alt="IT infrastructure and cybersecurity solutions background in Lagos Nigeria"
       />
 
       {/* Hero Man Image */}
@@ -27,7 +28,7 @@ const Hero = () => {
           height={1000}
           src={"/images/home_page/hero-man.png"}
           className="w-full h-auto object-contain object-bottom"
-          alt="Hero man"
+          alt="IT professional representing Chronix Technology cybersecurity and infrastructure services"
           priority
         />
       </div>
@@ -36,19 +37,26 @@ const Hero = () => {
       <div className="relative h-[70%] w-full max-w-7xl mx-auto flex items-center z-10 px-4 md:px-8 lg:px-12">
         {/* Text Content */}
         <div className="flex flex-col items-start max-w-2xl">
+          {/* ✅ MAIN SEO HEADING */}
           <h1 className="text-4xl md:text-[68px] font-bold text-white mb-4 leading-tight font-orbitron">
             {splitHeading.map((word, index) => (
               <span
                 key={index}
-                className={` ${index === 0 && "text-vibrant_orange"} block tracking-wider`}
+                className={`${
+                  index === 0 && "text-vibrant_orange"
+                } block tracking-wider`}
               >
                 {word}
               </span>
             ))}
           </h1>
+
+          {/* ✅ SUPPORTING SEO TEXT */}
           <p className="text-lg md:text-xl text-white/90 max-w-xl">
             {heroSubHeading}
           </p>
+
+          {/* CTA */}
           <span className="w-full items-center justify-start mt-4 flex gap-x-4">
             <Link href="/about-us" className="btn btn-white btn-lg rounded-2xl">
               Explore Ecosystem
@@ -62,7 +70,7 @@ const Hero = () => {
           </span>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

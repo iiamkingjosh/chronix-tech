@@ -1,9 +1,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
-import MainNavigation from "@/components/navigation/MainNavigation";
+
+import MainNavigation from "../components/navigation/MainNavigation";
 import { ThemeProvider } from "./ThemeProvider";
-import MainFooter from "@/components/navigation/MainFooter";
+import MainFooter from "../components/navigation/MainFooter";
 
 const orbitron = localFont({
   src: [
@@ -54,6 +55,7 @@ const helveticaNeue = localFont({
   ],
   variable: "--font-helvetica-neue",
 });
+
 const nebbulla = localFont({
   src: [{ path: "./fonts/nebbulla/Nebbulla.ttf", weight: "100" }],
   variable: "--font-nebbulla",
@@ -69,9 +71,59 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// ✅ SEO METADATA (FIXED WITH YOUR LOGO)
 export const metadata = {
-  title: "Chronix Tech",
-  description: "Reducing Technology Friction",
+  metadataBase: new URL("https://chronixtechnology.com"),
+
+  title: {
+    default: "Chronix Technology Limited",
+    template: "%s | Chronix Technology",
+  },
+
+  description:
+    "Chronix Technology Limited provides IT infrastructure, cybersecurity solutions, and enterprise IT services in Lagos, Nigeria.",
+
+  keywords: [
+    "IT company Nigeria",
+    "Cybersecurity Nigeria",
+    "IT infrastructure Lagos",
+    "Network solutions Nigeria",
+    "Chronix Technology",
+  ],
+
+  authors: [{ name: "Chronix Technology Limited" }],
+  creator: "Chronix Technology Limited",
+
+  openGraph: {
+    title: "Chronix Technology Limited",
+    description:
+      "Innovating Beyond Time - IT Infrastructure, Cybersecurity & Enterprise Solutions.",
+    url: "https://chronixtechnology.com",
+    siteName: "Chronix Technology",
+    images: [
+      {
+        url: "/images/home_page/chronix-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Chronix Technology Limited",
+      },
+    ],
+    locale: "en_NG",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Chronix Technology Limited",
+    description:
+      "IT Infrastructure, Cybersecurity & Enterprise Solutions in Nigeria.",
+    images: ["/images/home_page/chronix-logo.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {

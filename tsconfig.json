@@ -30,7 +30,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/app/api/contact/route.js"  ],
   "exclude": [
     "node_modules"
   ]

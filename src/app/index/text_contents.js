@@ -23,14 +23,13 @@ export const navigations = [
 
 export const companyName = "Chronix Tech";
 
-export const heroHeading = "Reducing Technology Friction";
-export const heroSubHeading = `Chronix is a global technology powerhouse facilitating the rapid adoption of innocation across 40+ emerging markets.
-We bridge the gap between global OEM’s and local consumers.`;
+export const heroHeading = "IT Infrastructure Cybersecurity Company Lagos Nigeria";
+export const heroSubHeading = `Chronix Technology Limited is a leading IT company in Lagos, Nigeria providing cybersecurity, IT infrastructure, cloud solutions, and enterprise technology services. We help businesses secure, scale, and optimize their operations with reliable and high-performance technology solutions.`;
 
 export const servicesText = {
   services: {
     heading: "Our Service Ecosystem",
-    subHeading: `Providing more than just distribution. We offer integrated services that power growth at every level of the technilogy lifecycle`,
+    subHeading: `Providing more than just distribution. We offer integrated services that power growth at every level of the technology lifecycle`,
     services: [
       {
         heading: "Managed Services",
@@ -53,7 +52,7 @@ export const servicesText = {
     ],
   },
   about: {
-    heading: "A commited partner delivering reliable, high-value results",
+    heading: "A committed partner delivering reliable, high-value results",
     subHeading: `Chronix Technology Limited delivers secure, scalable, and high-performance technology solutions that power modern businesses. We specialize in IT infrastructure, cybersecurity, cloud services, and enterprise technology support—designed to meet critical operational demands. We work closely with our clients as trusted partners—designing, deploying, and managing technology environments that drive productivity, protect critical assets, and support long-term growth. Our expertise spans IT infrastructure deployment, network and server management, cybersecurity solutions, enterprise systems support, and the supply of quality IT equipment. We operate as a strategic partner, not just a service provider, ensuring every solution is built for reliability, security, and measurable business impact. With disciplined execution, industry best practices, and a results-driven approach, Chronix enables organizations to operate with confidence and scale without disruption.`,
     footer: "Chronix Technology Limited — Innovating Beyond Time.",
   },
@@ -319,7 +318,7 @@ Over the years, Chronix has grown into a trusted technology partner serving SMEs
     heading: "Our Core Values",
     values: [
       {
-        title: "Intergrity",
+        title: "Integrity",
         image: "/images/about_us/core/core1.png",
       },
       {
