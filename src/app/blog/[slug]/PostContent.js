@@ -2,14 +2,43 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import DOMPurify from 'dompurify';
+
+let domPurifyHooksRegistered = false;
+
+if (typeof window !== 'undefined' && !domPurifyHooksRegistered) {
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if (node.tagName === 'A' && node.getAttribute('href')) {
+      node.setAttribute('target', '_blank');
+      node.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  domPurifyHooksRegistered = true;
+}
 
 export default function PostContent({ content }) {
   if (!content) {
     return <div className="text-red-500">Error: No content to display</div>;
   }
 
+  const isHtml = /<[^>]+>/.test(content);
+  if (isHtml) {
+    const sanitizedHtml = DOMPurify.sanitize(content, {
+      USE_PROFILES: { html: true },
+      ADD_ATTR: ['target', 'rel', 'style', 'class', 'width', 'height', 'data-align'],
+    });
+
+    return (
+      <div
+        className="blog-post-content prose prose-lg max-w-none"
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+      />
+    );
+  }
+
   return (
-    <div className="prose prose-lg max-w-none">
+    <div className="blog-post-content prose prose-lg max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -21,17 +50,10 @@ export default function PostContent({ content }) {
           ol: ({ children }) => <ol className="list-decimal list-inside mb-4">{children}</ol>,
           li: ({ children }) => <li className="mb-1">{children}</li>,
           img: ({ src, alt, ...props }) => (
-            <img
-              src={src}
-              alt={alt}
-              className="w-full h-auto rounded-lg my-6 shadow-lg"
-              {...props}
-            />
+            <img src={src} alt={alt} className="w-full h-auto rounded-lg my-6 shadow-lg" {...props} />
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4">
-              {children}
-            </blockquote>
+            <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4">{children}</blockquote>
           ),
           code: ({ node, inline, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');

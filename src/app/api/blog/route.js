@@ -4,25 +4,56 @@ import matter from 'gray-matter';
 
 const postsDirectory = path.join(process.cwd(), 'content', 'blog');
 
-export async function POST(request) {
-  const { title, excerpt, content, coverImage } = await request.json();
-
-  // Generate slug from title
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-  // Create frontmatter
-  const frontmatter = `---
-title: "${title}"
-date: "${new Date().toISOString().split('T')[0]}"
-excerpt: "${excerpt}"
-coverImage: "${coverImage || ''}"
+function buildFrontmatter({ title, excerpt, coverImage, date }) {
+  return `---
+title: ${JSON.stringify(title)}
+date: ${JSON.stringify(date)}
+excerpt: ${JSON.stringify(excerpt)}
+coverImage: ${JSON.stringify(coverImage || '')}
 ---
 
 `;
+}
+
+function normalizeSlug(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+export async function POST(request) {
+  const { title, excerpt, content, coverImage, slug: requestedSlug } = await request.json();
+
+  // Generate slug from title
+  const slug = normalizeSlug(requestedSlug || title);
+
+  if (!slug) {
+    return new Response(JSON.stringify({ error: 'Slug is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Create frontmatter
+  const frontmatter = buildFrontmatter({
+    title,
+    excerpt,
+    coverImage,
+    date: new Date().toISOString().split('T')[0],
+  });
 
   const fileContent = frontmatter + content;
 
   const filePath = path.join(postsDirectory, `${slug}.mdx`);
+
+  if (fs.existsSync(filePath)) {
+    return new Response(JSON.stringify({ error: 'A post with this slug already exists' }), {
+      status: 409,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   // Write the file
   fs.writeFileSync(filePath, fileContent);
