@@ -8,6 +8,11 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const postData = await getPostData(params.slug);
+  if (!postData) {
+    return {
+      title: 'Post Not Found',
+    };
+  }
   return {
     title: postData.title,
   };
