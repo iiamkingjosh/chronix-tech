@@ -1,38 +1,48 @@
-import fs from 'fs';
-import path from 'path';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
+import { getAdminApp } from '@/lib/firebaseAdmin';
 
 export const runtime = 'nodejs';
 
-const dataDir = path.join(process.cwd(), 'content', 'newsletter');
-const subscribersFilePath = path.join(dataDir, 'subscribers.json');
+const COLLECTION = 'newsletter_subscribers';
+const ipAttempts = new Map();
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 3;
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = ipAttempts.get(ip);
+
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    ipAttempts.set(ip, { windowStart: now, count: 1 });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return true;
+  }
+
+  entry.count += 1;
+  return false;
+}
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function readSubscribers() {
-  if (!fs.existsSync(subscribersFilePath)) {
-    return [];
-  }
-
-  try {
-    const raw = fs.readFileSync(subscribersFilePath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function writeSubscribers(subscribers) {
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  fs.writeFileSync(subscribersFilePath, JSON.stringify(subscribers, null, 2));
-}
-
 export async function POST(request) {
   try {
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+
+    if (isRateLimited(ip)) {
+      return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const { fullName, email } = await request.json();
     const normalizedFullName = String(fullName || '').trim();
     const normalizedEmail = String(email || '').trim().toLowerCase();
@@ -51,24 +61,26 @@ export async function POST(request) {
       });
     }
 
-    const subscribers = readSubscribers();
-    const exists = subscribers.some((subscriber) => subscriber.email === normalizedEmail);
+    const db = getFirestore(getAdminApp());
+    const existing = await db
+      .collection(COLLECTION)
+      .where('email', '==', normalizedEmail)
+      .limit(1)
+      .get();
 
-    if (exists) {
+    if (!existing.empty) {
       return new Response(JSON.stringify({ message: 'You are already subscribed.' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    subscribers.push({
+    await db.collection(COLLECTION).add({
       fullName: normalizedFullName,
       email: normalizedEmail,
-      subscribedAt: new Date().toISOString(),
+      subscribedAt: Timestamp.now(),
       source: 'website_footer',
     });
-
-    writeSubscribers(subscribers);
 
     return new Response(JSON.stringify({ message: 'Subscribed successfully.' }), {
       status: 201,

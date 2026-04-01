@@ -30,11 +30,11 @@ export function subscribeToAuthState(callback) {
 }
 
 function setAdminCookie() {
-  document.cookie = 'admin_signed_in=1; path=/; max-age=86400; SameSite=Strict';
+  document.cookie = 'admin_signed_in=1; path=/; max-age=86400; SameSite=Strict; Secure';
 }
 
 function clearAdminCookie() {
-  document.cookie = 'admin_signed_in=; path=/; max-age=0; SameSite=Strict';
+  document.cookie = 'admin_signed_in=; path=/; max-age=0; SameSite=Strict; Secure';
 }
 
 export async function signInAdminWithGoogle() {

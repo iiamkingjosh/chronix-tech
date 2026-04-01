@@ -1,8 +1,10 @@
 'use client';
 
+import 'quill/dist/quill.snow.css';
 import { useEffect, useId, useRef, useState } from 'react';
 
 let quillModulesRegistered = false;
+let resizeModuleRegistered = false;
 
 const formats = [
   'header',
@@ -12,7 +14,6 @@ const formats = [
   'blockquote',
   'code-block',
   'list',
-  'bullet',
   'link',
   'image',
 ];
@@ -157,27 +158,17 @@ export default function RichTextEditor({ value, onChange, onImageUpload }) {
         const quillModule = await import('quill');
         const Quill = quillModule.default || quillModule;
 
-        if (typeof window !== 'undefined') {
-          window.Quill = Quill;
-        }
-        if (typeof globalThis !== 'undefined') {
-          globalThis.Quill = Quill;
-        }
-
         let resizeEnabled = false;
         try {
-          const resizeModule = await import('quill-image-resize-module');
-          const resolvedResizeModule =
-            resizeModule?.ImageResize ||
-            resizeModule?.default ||
-            resizeModule;
+          const resizeModule = await import('quill-resize-image');
+          const ResizeClass = resizeModule?.Resize || resizeModule?.default;
 
-          if (resolvedResizeModule && !Quill.imports['modules/imageResize']) {
-            Quill.register('modules/imageResize', resolvedResizeModule);
-            resizeEnabled = true;
-          } else if (Quill.imports['modules/imageResize']) {
-            resizeEnabled = true;
+          if (ResizeClass && !resizeModuleRegistered) {
+            Quill.register('modules/resize', ResizeClass);
+            resizeModuleRegistered = true;
           }
+
+          resizeEnabled = true;
         } catch (error) {
           console.warn('Image resize module failed to load. Continuing without resize support.', error);
         }
@@ -216,9 +207,7 @@ export default function RichTextEditor({ value, onChange, onImageUpload }) {
         };
 
         if (resizeEnabled) {
-          modules.imageResize = {
-            parchment: Quill.import('parchment'),
-          };
+          modules.resize = {};
         }
 
         const editor = new Quill(editorHostRef.current, {

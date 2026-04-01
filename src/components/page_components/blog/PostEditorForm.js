@@ -82,7 +82,7 @@ export default function PostEditorForm({
     setSubmitting(true);
 
     try {
-      const endpoint = isEditMode ? `/api/blog/${encodeURIComponent(slug)}` : '/api/blog';
+      const endpoint = isEditMode ? `/api/blog/${encodeURIComponent(resolvedSlug)}` : '/api/blog';
       const method = isEditMode ? 'PUT' : 'POST';
       const token = await getCurrentUserIdToken();
 

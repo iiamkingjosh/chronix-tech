@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "quill/dist/quill.snow.css";
 
 /* ── Company Logos Seamless Scroll ── */
 @keyframes seamless-slide {
@@ -36,7 +35,7 @@
 }
 
 
-/* Force light theme in dark mode (debug override) */
+/* Force light theme regardless of OS preference (intentional brand decision) */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #ffffff;

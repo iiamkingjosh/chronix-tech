@@ -26,7 +26,8 @@ export default function PostContent({ content }) {
   if (isHtml) {
     const sanitizedHtml = DOMPurify.sanitize(content, {
       USE_PROFILES: { html: true },
-      ADD_ATTR: ['target', 'rel', 'style', 'class', 'width', 'height', 'data-align'],
+      ADD_ATTR: ['target', 'rel', 'class', 'width', 'height', 'data-align'],
+      FORBID_ATTR: ['style'],
     });
 
     return (
@@ -55,9 +56,11 @@ export default function PostContent({ content }) {
           blockquote: ({ children }) => (
             <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-4">{children}</blockquote>
           ),
-          code: ({ node, inline, className, children, ...props }) => {
+          code: ({ className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
-            return !inline && match ? (
+            const contentText = Array.isArray(children) ? children.join('') : String(children || '');
+            const isBlock = !!match || contentText.includes('\n');
+            return isBlock ? (
               <pre className="bg-gray-100 p-4 rounded mb-4 overflow-x-auto">
                 <code className={className} {...props}>
                   {children}

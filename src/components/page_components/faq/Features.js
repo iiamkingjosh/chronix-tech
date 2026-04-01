@@ -15,7 +15,7 @@ const Features = () => {
       icon: <Building2Icon size={16} />,
     },
     {
-      title: "Email Support",
+      title: "Phone Support",
       text: "availble during workinghours",
       icon: <Phone size={16} />,
     },
@@ -31,7 +31,7 @@ const Features = () => {
           className="object-contain"
         />
       </div>
-      <div className="absolute bottom-0 left-0 w-1/2 translate-y-[87%] -z-0">
+      <div className="absolute bottom-0 left-0 w-1/2 translate-y-[87%] z-0">
         <Image
           src={"/images/faq/vecteezy_blue-dots-world-map_13079258 (5).png"}
           alt="Loggo Image"
@@ -47,13 +47,18 @@ const Features = () => {
         <h1 className="text-4xl font-bold font-orbitron">
           We are waiting to hear from you
         </h1>
-        <p>or reach out manually on info@chronixtech.com</p>
+        <p>
+          or reach out manually on {" "}
+          <a href="mailto:info@chronixtech.com" className="underline">
+            info@chronixtech.com
+          </a>
+        </p>
       </div>
       <div className="w-full bg-vibrant_orange h-auto py-4 flex flex-wrap justify-center gap-6 px-6 md:px-12">
         {features.map((feature, index) => (
           <div
             key={index}
-            className="flex flex-col items-start text-center p-6  rounded-lg min-w-[250px] flex-1"
+            className="flex flex-col items-start text-center p-6 rounded-lg min-w-62.5 flex-1"
           >
             <div className="flex items-center justify-center bg-white  rounded-full mb-3 w-8 h-8 text-black">
               {feature.icon}

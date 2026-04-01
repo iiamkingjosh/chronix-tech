@@ -9,7 +9,7 @@ const FAQItem = ({ text, isOpen, onToggle }) => {
       onClick={onToggle}
       className={`
         flex flex-col z-20 rounded-lg px-4 w-full
-        max-w-[500px] lg:max-w-[600px] bg-white text-black
+        max-w-125 lg:max-w-150 bg-white text-black
         text-base sm:text-lg md:text-xl
         cursor-pointer relative
         transition-all duration-300 ease-in-out
@@ -23,7 +23,7 @@ const FAQItem = ({ text, isOpen, onToggle }) => {
       <div className="flex items-center justify-between min-h-20 sm:h-24">
         <span className="py-3 sm:py-0 font-medium">{text.question}</span>
 
-        <span className="ml-2 flex-shrink-0">
+        <span className="ml-2 shrink-0">
           <ArrowDown
             className={`
               w-5 h-5 sm:w-6 sm:h-6

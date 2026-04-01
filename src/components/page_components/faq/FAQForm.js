@@ -28,17 +28,16 @@ const FAQForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("https://formspree.io/f/xreozdbw", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify(form),
       });
 
-      const data = await res.json();
-
-      if (data.success) {
+      if (res.ok) {
         alert("✅ Message sent successfully!");
         setForm({
           firstName: "",
@@ -48,7 +47,9 @@ const FAQForm = () => {
           message: "",
         });
       } else {
-        alert("❌ Failed to send message");
+        const data = await res.json().catch(() => ({}));
+        const errorMessage = data?.errors?.[0]?.message || "Failed to send message";
+        alert(`❌ ${errorMessage}`);
       }
     } catch (error) {
       alert("❌ Something went wrong");

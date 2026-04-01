@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import { notFound } from 'next/navigation';
 import PostContent from './PostContent';
 import { getPostBySlug } from '@/lib/firestorePosts';
 import { SITE_BASE_URL, resolvePostCoverAlt, resolvePostCoverImage } from '@/lib/media';
@@ -54,13 +55,8 @@ export default async function Post({ params }) {
   const { slug } = await params;
   const postData = await getPostBySlug(slug);
 
-  if (!postData) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-        <p>The requested blog post could not be found.</p>
-      </div>
-    );
+  if (!postData || !postData.published) {
+    notFound();
   }
 
   const resolvedCoverImage = resolvePostCoverImage(postData, { useDefault: false });
@@ -81,7 +77,7 @@ export default async function Post({ params }) {
             image: schemaImage,
             url: `${SITE_BASE_URL}/blog/${slug}`,
             datePublished: postData.date,
-            dateModified: postData.date,
+            dateModified: postData.updatedAt || postData.date,
             author: {
               '@type': 'Organization',
               name: 'Chronix Technology Limited',

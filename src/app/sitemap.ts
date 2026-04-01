@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const slugs = await getAllSlugs();
     posts = slugs.map((item) => ({
       url: `${baseUrl}/blog/${item.slug}`,
-      lastModified: new Date(),
+      lastModified: item.lastModified ? new Date(item.lastModified) : new Date(),
     }));
   } catch (error) {
     console.error("Error fetching post slugs for sitemap:", error);

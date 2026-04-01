@@ -38,12 +38,13 @@ function serializePost(docSnap) {
 
 export async function getAllPosts({ publishedOnly = true } = {}) {
   const db = getDb();
-  let query = db.collection(COLLECTION);
+  let query = publishedOnly
+    ? db.collection(COLLECTION).where('published', '==', true)
+    : db.collection(COLLECTION);
   const snapshot = await query.get();
   const posts = snapshot.docs.map(serializePost);
 
   return posts
-    .filter((post) => (publishedOnly ? post.published : true))
     .sort((left, right) => {
       const leftTime = left.date ? new Date(left.date).getTime() : 0;
       const rightTime = right.date ? new Date(right.date).getTime() : 0;
@@ -99,6 +100,8 @@ export async function updatePost(slug, { title, excerpt, content, coverImageUrl,
   const docRef = snapshot.docs[0].ref;
   const newSlug = normalizeSlug(newSlugRaw || slug);
 
+  if (!title || !String(title).trim()) throw new Error('Title is required.');
+
   // If slug is changing, check for conflicts
   if (newSlug !== slug) {
     const conflict = await db.collection(COLLECTION).where('slug', '==', newSlug).limit(1).get();
@@ -133,7 +136,14 @@ export async function getAllSlugs() {
   const db = getDb();
   const snapshot = await db.collection(COLLECTION)
     .where('published', '==', true)
-    .select('slug')
+    .select('slug', 'updatedAt', 'createdAt')
     .get();
-  return snapshot.docs.map((doc) => ({ slug: doc.data().slug }));
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    const rawDate = data.updatedAt || data.createdAt;
+    return {
+      slug: data.slug,
+      lastModified: rawDate ? rawDate.toDate().toISOString() : null,
+    };
+  });
 }

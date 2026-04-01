@@ -15,6 +15,7 @@ function AdminBlogInner() {
   const [authUser, setAuthUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState('');
   const [activeTab, setActiveTab] = useState('manage');
   const searchParams = useSearchParams();
 
@@ -66,11 +67,14 @@ function AdminBlogInner() {
       if (response.ok) {
         const postsData = await response.json();
         setPosts(postsData);
+        setFetchError('');
       } else {
         console.error('Failed to fetch posts');
+        setFetchError('Failed to load posts. Please refresh the page.');
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setFetchError('Failed to load posts. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -250,7 +254,13 @@ function AdminBlogInner() {
               <p className="mt-1 text-sm text-gray-600">Manage your blog posts</p>
             </div>
 
-            {posts.length === 0 ? (
+            {fetchError && (
+              <div className="px-6 py-4 bg-red-50 border-b border-red-200">
+                <p className="text-sm text-red-700">{fetchError}</p>
+              </div>
+            )}
+
+            {!fetchError && posts.length === 0 ? (
               <div className="px-6 py-12 text-center">
                 <div className="text-gray-400 mb-4">
                   <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">

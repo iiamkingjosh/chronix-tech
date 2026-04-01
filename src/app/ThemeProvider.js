@@ -7,10 +7,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 // Create a Theme Context
 const ThemeContext = createContext();
 
-export const useTheme = () => {
-  return useContext(ThemeContext);
-};
-
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("light"); // Default to 'light'
   const [mounted, setMounted] = useState(false); // Track when component is mounted
@@ -39,7 +35,7 @@ export const ThemeProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div>{children}</div>
+      <>{children}</>
     </ThemeContext.Provider>
   );
 };
